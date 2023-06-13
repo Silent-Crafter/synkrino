@@ -42,3 +42,24 @@
   font-size: 24px;
   margin-top: 60px;
 }
+
+.prod-image-container {
+  height:250px;
+  object-fit: contain;
+  max-height: 250px;
+  padding:8px
+}
+
+.prod-image {
+  height: 100%;
+  padding: 8px;
+}
+
+.prod-name {
+  height: 100px;
+}
+
+.prod-price,
+.prod-service {
+  height: 50px;
+}

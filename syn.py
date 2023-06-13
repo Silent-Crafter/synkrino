@@ -4,7 +4,7 @@ from urllib.parse import quote_plus
 from bs4 import BeautifulSoup
 
 headers = {
-    "sec-ch-ua-platform": "Linux",
+    "sec-ch-ua-platform": "Windows",
     "sec-fetch-dest": "document",
     "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36",
 }
@@ -21,19 +21,21 @@ def amazon_scraper(resp: str):
     titles = []
     prices = []
     links = []
+    images = []
 
     cards = soup.find_all('div', {'class': 's-card-container'})
     # print(cards[0])
-    print(soup)
-    print(cards)
+    # print(soup)
+    # print(cards)
 
     for card in cards:
         try:
             titles.append(card.find('a', {'class': 'a-link-normal s-underline-text s-underline-link-text s-link-style a-text-normal'}).text)
             prices.append(card.find('span', {'class': 'a-price-whole'}).text)
             links.append("https://www.amazon.in" + card.a['href'])
+            images.append(card.find('img', {'class': 's-image'})['src'])
         except AttributeError:
-            print(cards)
+            # print(cards)
             pass
 
     try:
@@ -42,7 +44,7 @@ def amazon_scraper(resp: str):
         symbol = "₹"
     prices = list(map(lambda x: symbol+x, prices))
 
-    return titles, prices, links
+    return titles, prices, links, images
 
 
 def flipkart_scraper(resp: str):
@@ -52,6 +54,7 @@ def flipkart_scraper(resp: str):
     titles = []
     prices = []
     links = []
+    images = []
 
     cols = soup.find_all('div', {'class': '_13oc-S'})
     for col in cols:
@@ -92,14 +95,16 @@ def flipkart_scraper(resp: str):
                 prices.append(price)
                 links.append(link)
 
-    return titles, prices, links
+    images = list(map(lambda x: x['src'] , soup.find_all('img', {'class': '_396cs4'})))
+
+    return titles, prices, links, images
 
 
 def scrape(query):
     headers = {
-        "sec-ch-ua-platform": "Windows",
+        "sec-ch-ua-platform": "windows",
         "sec-fetch-dest": "document",
-        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36",
+        "user-agent": "mozilla/5.0 (x11; linux x86_64) applewebkit/537.36 (khtml, like gecko) chrome/112.0.0.0 safari/537.36",
     }
     amazon_url = "https://www.amazon.in/s/ref=nb_sb_noss_2?url=search-alias%3Daps&field-keywords=" + quote_plus(query)
     flipkart_url = "https://www.flipkart.com/search?q=" + quote_plus(query) + "&marketplace=FLIPKART&otracker=start&as-show=on&as=off"
@@ -107,10 +112,10 @@ def scrape(query):
     amz_resp = requests.get(amazon_url, headers=headers)
     flp_resp = requests.get(flipkart_url, headers=headers)
    
-    amz_titles, amz_prices, amz_links = amazon_scraper(amz_resp.text)
-    flp_titles, flp_prices, flp_links = flipkart_scraper(flp_resp.text)
+    amz_titles, amz_prices, amz_links, amz_images = amazon_scraper(amz_resp.text)
+    flp_titles, flp_prices, flp_links, flp_images = flipkart_scraper(flp_resp.text)
 
-    return amz_titles, amz_prices
+    return amz_titles, amz_prices, amz_links, amz_images, flp_titles, flp_prices, flp_links, flp_images
 
 
 def main():
