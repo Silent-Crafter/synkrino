@@ -15,38 +15,28 @@ def search():
 
     data = request.form.get("product")
 
-    cards = ""
+    cols = ""
 
     results = ""
 
     row = """
-    <div class="w3-container" style="margin-top:20px;">
-      <div class="w3-row-padding w3-padding-32 w3-center">
-        {cols}
-      </div>
+    <div class="w3-row w3-grayscale" style="margin-bottom: 20px;">
+      {cols}
     </div>
     """
 
-    card = """
-        <div class="w3-quarter w3-margin-top" style="padding-left: 32px; padding-right: 32px">
-          <div class="w3-card-2 w3-hover-shadow">
-            <a href="{l}" style="text-decoration: none">
-              <div class="w3-display-container w3-lightgrey prod-image-container">
-                  <img src="{i}" height="100%" class="w3-display-middle prod-image"/>
-              </div>
-              <div class="w3-container w3-blue prod-name">
-                  <p>{n}</p>
-              </div>
-              <div class="w3-container w3-grey prod-price">
-                  <p>{p}</p>
-              </div>
-              <div class="w3-container w3-red prod-service">
-                  <p>{s}</p>
-              </div>
-            </a>
+    item = """
+    <div class="w3-col l3 s6" style="padding: 2px">
+      <div class="w3-container">
+        <div class="w3-display-container">
+          <img src="{i}">
+          <div class="w3-display-middle w3-display-hover">
+            <a href="{l}" class="w3-button w3-black" target="_blank">Buy now <i class="fa fa-shopping-cart"></i></a>
           </div>
         </div>
-
+        <p>{n}<br><b>{p}</b><br><span class="w3-small w3-text-grey">{s}</span></p>
+      </div>
+    </div>
     """
 
     amz_titles, amz_price, amz_links, amz_images, flp_titles, flp_price, flp_links, flp_images = scrape(data)
@@ -67,19 +57,19 @@ def search():
         except IndexError: ft = fp = fl = ""
 
         if at and ap and al: 
-            cards += card.format(n=at, p=ap, l=al, i=ai, s="amazon")
+            cols += item.format(n=at, p=ap, l=al, i=ai, s="amazon")
             col_counter += 1
         amz_counter += 1
 
         if ft and fp and fl: 
-            cards += card.format(n=ft, p=fp, l=fl, i=fi, s="flipkart")
+            cols += item.format(n=ft, p=fp, l=fl, i=fi, s="flipkart")
             col_counter += 1
         flp_counter += 1
 
         if col_counter == 4:
-            results += row.format(cols=cards)
+            results += row.format(cols=cols)
             col_counter = 0
-            cards = ""
+            cols = ""
 
     return render_template('search.html', card=results)
 

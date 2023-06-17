@@ -112,7 +112,11 @@ def scrape(query):
     amz_resp = requests.get(amazon_url, headers=headers)
     flp_resp = requests.get(flipkart_url, headers=headers)
    
-    amz_titles, amz_prices, amz_links, amz_images = amazon_scraper(amz_resp.text)
+    if amz_resp.status_code == 200:
+        amz_titles, amz_prices, amz_links, amz_images = amazon_scraper(amz_resp.text)
+    else:
+        amz_titles = amz_prices = amz_links = amz_images = ""
+
     flp_titles, flp_prices, flp_links, flp_images = flipkart_scraper(flp_resp.text)
 
     return amz_titles, amz_prices, amz_links, amz_images, flp_titles, flp_prices, flp_links, flp_images
