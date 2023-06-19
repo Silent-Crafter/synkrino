@@ -57,6 +57,7 @@
 
 .prod-name {
   height: 100px;
+  overflow: scroll;
 }
 
 .prod-price,

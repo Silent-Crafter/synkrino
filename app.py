@@ -34,7 +34,10 @@ def search():
             <a href="{l}" class="w3-button w3-black" target="_blank">Buy now <i class="fa fa-shopping-cart"></i></a>
           </div>
         </div>
-        <p>{n}<br><b>{p}</b><br><span class="w3-small w3-text-grey">{s}</span></p>
+        <div class="prod-name">
+          <p>{n}
+        </div>
+          <br><b>{p}</b><br><span class="w3-small w3-text-grey">{s}</span></p>
       </div>
     </div>
     """
@@ -43,6 +46,8 @@ def search():
 
     amazon = list(zip(amz_titles, amz_price, amz_links, amz_images))
     flipkart = list(zip(flp_titles, flp_price, flp_links, flp_images))
+
+    tot = len(amazon) + len(flipkart)
 
     amz_counter = 0
     flp_counter = 0
@@ -71,7 +76,7 @@ def search():
             col_counter = 0
             cols = ""
 
-    return render_template('search.html', card=results)
+    return render_template('search.html', card=results, q=data, n=tot)
 
 if __name__ == '__main__':
     app.run()
